@@ -1,7 +1,7 @@
 # BRRtools
 
 by Bregalad. Special thanks to Kode54.  
-Bug fixes and improvements by nyanpasu64 and Optiroc.  
+Bug fixes and improvements by KevinM, nyanpasu64 and Optiroc.  
 
 BRRtools are currently the most evolved tools to convert between standard RIFF .wav format and SNES's built-in BRR sound format.
 They have many features never seen before in any other converter, and are open source.
