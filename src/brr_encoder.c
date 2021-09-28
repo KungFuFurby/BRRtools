@@ -11,9 +11,7 @@
 static void print_instructions()
 {
 	printf(
-		"\n*** BRRtools 3.14 ***\n\n"
-		"brr_encoder (c) 2013 Bregalad special tanks to Kode54\n"
-		"32-bit-int version by jimbo1qaz\n"
+		"brr_encoder 3.15\n\n"
 		"Usage : brr_encoder [options] infile.wav outfile.brr\n"
 		"Options :\n"
 		"-a[ampl] adjust wave amplitude by a factor ampl (default : 1.0)\n"
@@ -22,7 +20,7 @@ static void print_instructions()
 		"   The output will be resampled in a way so the looped part of the sample is\n"
 		"   an integer # of BRR blocks.\n"
 		"-f[0123] manually enable filters for BRR blocks (default : all enabled)\n"
-		"-r[type][ratio] resample input stream, followed by resample ratio (0.0 to 4.0)\n"
+		"-r[type][ratio] resample input stream, followed by resample ratio (> 0.0)\n"
 		"  (lower means more samples at output, better quality but increased size,\n"
 		"  higher means less smaples, worse quality but decreased size).\n"
 		"-s[type][rate] automatically resample to get the specified samplerate\n"
@@ -320,7 +318,7 @@ int main(const int argc, char *const argv[])
     char loop_flag = 0;						// = 0x02 if loop flag is active
     unsigned int target_samplerate = 0;		// Output sample rate (0 = don't change)
     bool fix_loop_en = false;				// True if fixed loop is activated
-	unsigned int loop_start;				// Starting point of loop
+	signed int loop_start;				// Starting point of loop
 	unsigned int truncate_len = 0;			// Point at which input wave will be truncated (if = 0, input wave is not truncated)
 	bool treble_boost = false;
 
@@ -368,7 +366,7 @@ int main(const int argc, char *const argv[])
 			case 'r':
 				resample_type = optarg[0];
 				ratio = atof(optarg+1);
-				if(ratio <= 0.0 || ratio > 4.0)
+				if(ratio <= 0.0)
 					print_instructions();
 				break;
 
@@ -543,20 +541,25 @@ int main(const int argc, char *const argv[])
 	}
 	fclose(inwav);		// We're done with the input wave file
 
-	unsigned int target_length;
-	if(target_samplerate)						// Set resample factor if auto samplerate mode
-		target_length = ((long long)samples_length * target_samplerate) /  hdr.sample_rate;
-	else
-		target_length = (int)(samples_length/ratio);
+	if(target_samplerate) {
+		ratio = 1.0 * hdr.sample_rate / target_samplerate;
+	}
 
+	unsigned int target_length;
 	unsigned int new_loopsize;
-	if(fix_loop_en)
-	{
-		unsigned int loopsize = ((long long)(samples_length - loop_start) * target_length) / samples_length;
+
+	if (!fix_loop_en)
+		target_length = round(samples_length/ratio);
+	else {
+		if (loop_start < 0) {
+			loop_start += samples_length;
+		}
+
+		double loopsize = (samples_length - loop_start) / ratio;
 		// New loopsize is the multiple of 16 that comes after loopsize
-		new_loopsize = ((loopsize + 15)/16)*16;
+		new_loopsize = ceil(loopsize/16)*16;
 		// Adjust resampling
-		target_length = ((long long)target_length * new_loopsize) / loopsize;
+		target_length = round(samples_length/ratio * new_loopsize / loopsize);
 	}
 
 	samples = resample(samples, samples_length, target_length, resample_type);
