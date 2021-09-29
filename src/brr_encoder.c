@@ -12,14 +12,14 @@ static void print_instructions()
 {
 	printf(
 		"brr_encoder 3.15\n\n"
-		"Usage : brr_encoder [options] infile.wav outfile.brr\n"
-		"Options :\n"
-		"-a[ampl] adjust wave amplitude by a factor ampl (default : 1.0)\n"
-		"-l(pos) enable looping flag in the encoded BRR sample (default : disabled)\n"
+		"Usage: brr_encoder [options] infile.wav outfile.brr\n"
+		"Options:\n"
+		"-a[ampl] adjust wave amplitude by a factor ampl (default: 1.0)\n"
+		"-l(pos) enable looping flag in the encoded BRR sample (default: disabled)\n"
 		"   If a number follows the -l flag, this is the input's loop point in samples.\n"
 		"   The output will be resampled in a way so the looped part of the sample is\n"
 		"   an integer # of BRR blocks.\n"
-		"-f[0123] manually enable filters for BRR blocks (default : all enabled)\n"
+		"-f[0123] manually enable filters for BRR blocks (default: all enabled)\n"
 		"-r[type][ratio] resample input stream, followed by resample ratio (> 0.0)\n"
 		"  (lower means more samples at output, better quality but increased size,\n"
 		"  higher means less smaples, worse quality but decreased size).\n"
@@ -29,10 +29,10 @@ static void print_instructions()
 		"-w disable wrapping (encoded sample will be compatible with old SPC players)\n"
 		"-m add Addmusic header to the samples (to be usable with SMW Addmusic tools)\n"
 		"-g enable treble boost to compensate the gaussian filtering of SNES hardware\n"
-		"\nResampling interpolation types :\n"
-		"n : nearest neighboor, l : linear, s : sine, c : cubic, b : bandlimited\n\n"
-		"Examples : brr_encoder -l432 -a0.8 -f01 -sc32000 in_sample.wav out_sample.brr\n"
-		"           brr_encoder -l -f23 -rb0.84 -t19 in_sample.wav out_sample.brr\n"
+		"\nResampling interpolation types:\n"
+		"n: nearest neighboor, l: linear, s: sine, c: cubic, b: bandlimited\n\n"
+		"Examples: brr_encoder -l432 -a0.8 -f01 -sc32000 in_sample.wav out_sample.brr\n"
+		"          brr_encoder -l -f23 -rb0.84 -t19 in_sample.wav out_sample.brr\n"
 	);
 	exit(1);
 }
@@ -82,7 +82,7 @@ static double ADPCMMash(unsigned int shiftamount, u8 filter, const Sample PCM_da
 		{
 			/* Take advantage of wrapping */
 			d = d - 32768 * ( d >> 24 );
-			if(write) printf("Caution : Wrapping was used.\n");
+			if(write) printf("Caution: Wrapping was used.\n");
 		}
 		dp = d + (step << 2) + (step >> 2);
 		c = 0;
@@ -283,7 +283,7 @@ static Sample *resample(Sample *samples, size_t samples_length, size_t out_lengt
 		break;
 
 	default :
-		fprintf(stderr, "\nError : A valid interpolation algorithm must be chosen !\n");
+		fprintf(stderr, "\nError: A valid interpolation algorithm must be chosen!\n");
 		print_instructions();
 	}
 	// No longer need the non-resampled version of the sample
@@ -397,7 +397,7 @@ int main(const int argc, char *const argv[])
 				break;
 
 			default :
-				printf("Invalid command line syntax !\n");
+				printf("Invalid command line arguments!\n");
 				print_instructions();
 		}
 	}
@@ -409,7 +409,7 @@ int main(const int argc, char *const argv[])
 	FILE *inwav = fopen(inwav_path, "rb");
 	if(!inwav)
 	{
-		fprintf(stderr, "Error : Can't open file %s for reading.\n", inwav_path);
+		fprintf(stderr, "Error: Can't open file %s for reading.\n", inwav_path);
 		exit(1);
 	}
 
@@ -434,33 +434,33 @@ int main(const int argc, char *const argv[])
 	// If they couldn't read the file (for example if it's too small)
 	if(err != sizeof(hdr))
 	{
-		fprintf(stderr, "Error : Input file in incompatible format %d\n", err);
+		fprintf(stderr, "Error: Input file in incompatible format %d\n", err);
 		exit(1);
 	}
 
 	// Read "RIFF" word
 	if(strncmp(hdr.chunk_ID, "RIFF", 4))
 	{
-		fprintf(stderr, "Error : Input file in unsupported format : \"RIFF\" block missing.\n");
+		fprintf(stderr, "Error: Input file in unsupported format: \"RIFF\" block missing.\n");
 		exit(1);
 	}
 	// "WAVEfmt" letters
 	if(strncmp(hdr.wave_str, "WAVEfmt ", 8))
 	{
-		fprintf(stderr, "Input file in unsupported format : \"WAVEfmt\" block missing !\n");
+		fprintf(stderr, "Input file in unsupported format: \"WAVEfmt\" block missing !\n");
 		exit(1);
 	}
 
 	//Size of sub-chunk1 (header) must be at least 16 and in PCM format
 	if(hdr.sc1size < 0x10 || hdr.audio_format != 1)
 	{
-		fprintf(stderr, "Input file in unsupported format : file must be uncompressed PCM !\n");
+		fprintf(stderr, "Input file in unsupported format: file must be uncompressed PCM!\n");
 		exit(1);
 	}
 
 	//Check how many channels
 	if(hdr.chans != 1)
-		printf("Input is multi-channel : Will automatically be converted to mono.\n");
+		printf("Input is multi-channel - automatically converting to mono...\n");
 
 	// Check for correctness of byte rate
 	if(hdr.byte_rate != hdr.sample_rate*hdr.chans*hdr.bits_per_sample/8)
@@ -472,7 +472,7 @@ int main(const int argc, char *const argv[])
 	//Read block align and bits per sample numbers
 	if(hdr.block_align != hdr.bits_per_sample*hdr.chans/8)
 	{
-		fprintf(stderr, "Block align in input file is set incorrectly\n");
+		fprintf(stderr, "Block align in input file is set incorrectly.\n");
 		exit(1);
 	}
 	fseek(inwav, hdr.sc1size-0x10, SEEK_CUR);			// nSkip possible longer header
@@ -536,7 +536,7 @@ int main(const int argc, char *const argv[])
 
 		// If you encounter the error below, add your implementation for different # of bits
 		default :
-			fprintf(stderr, "Error : unsupported amount of bits per sample (8 or 16 are supported)\n");
+			fprintf(stderr, "Error: unsupported amount of bits per sample (8 or 16 are supported)\n");
 			exit(1);
 	}
 	fclose(inwav);		// We're done with the input wave file
@@ -572,7 +572,7 @@ int main(const int argc, char *const argv[])
 	{
 		int padding = 16 - (samples_length % 16);
 		printf(
-			"The Amount of PCM samples isn't a multiple of 16 !\n"
+			"The Amount of PCM samples isn't a multiple of 16!\n"
 			"The sample will be padded with %d zeroes at the beginning.\n"
 		, padding);
 
@@ -580,7 +580,7 @@ int main(const int argc, char *const argv[])
 		samples = realloc(samples, WIDTH*(samples_length + padding));
 		if(!samples)
 		{
-			fprintf(stderr, "Error : Can't allocate memory.\n");
+			fprintf(stderr, "Error: Can't allocate memory.\n");
 			exit(1);
 		}
 		memmove(samples + padding, samples, WIDTH*samples_length);
@@ -590,12 +590,12 @@ int main(const int argc, char *const argv[])
 			samples[--padding] = 0;
 		while(padding > 0);
 	}
-	printf("Size of file to encode : %u samples = %u BRR blocks.\n", samples_length, samples_length/16);
+	printf("The file is %u samples long, making %u BRR blocks.\n", samples_length, samples_length/16);
 
 	FILE *outbrr = fopen(outbrr_path, "wb");
 	if(!outbrr)
 	{
-		fprintf(stderr, "Error : Can't open file %s for writing.\n", outbrr_path);
+		fprintf(stderr, "Error: Can't open file %s for writing.\n", outbrr_path);
 		exit(1);
 	}
 
@@ -634,11 +634,11 @@ int main(const int argc, char *const argv[])
 		BRR[0] |= loop_flag;
 		fwrite(BRR, 9, 1, outbrr);
 	}
-	puts("Done !");
+	puts("Done!");
 
 	if(fix_loop_en)
 	{
-		printf("Position of the loop within the BRR sample : %u samples = %u BRR blocks.\n", k, k/16);
+		printf("Position of the loop within the BRR file: %u samples = %u BRR blocks.\n", k, k/16);
 	}
 
 	for(int i=0; i<4; i++)
