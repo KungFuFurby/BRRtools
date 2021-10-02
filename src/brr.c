@@ -29,7 +29,7 @@ void print_note_info(const unsigned int loopsize, const unsigned int samplerate)
 		double inote = round(note);
 		int cents = (int)((note - inote) * 100.0);
 
-		printf(" (probable note : %s%d %+d cents)\n", notes[(int)inote], octave, cents);
+		printf(" (probable note: %s%d %+d cents)\n", notes[(int)inote], octave, cents);
 	}
 	else
 		printf("\n");

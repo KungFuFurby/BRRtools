@@ -12,15 +12,15 @@ static void print_instructions()
 {
 	printf(
 		"spc_decoder 3.15\n\n"
-		"Usage : spc_decoder [options] infile.spc outfile\n"
-		"Options :\n"
+		"Usage: spc_decoder [options] infile.spc outfile\n"
+		"Options:\n"
 		"-n number of times to loop through the sample(s) when applicable, default 1\n"
-		"-f first sample # to decode (default : 0)\n"
-		"-l last sample # to decode (default : same as first)\n"
+		"-f first sample # to decode (default: 0)\n"
+		"-l last sample # to decode (default: same as first)\n"
 		"-s output samplerate, default 32000\n"
 		"-m minimum output length in seconds (applies only to looped samples)\n"
 		"-g simulate SNES' gaussian lowpass filtering\n"
-		"\nExample : spc_decoder -f3 -l12 -s22050 -m0.8 music.spc music_sample\n"
+		"\nExample: spc_decoder -f3 -l12 -s22050 -m0.8 music.spc music_sample\n"
 	);
 	exit(1);
 }
@@ -65,7 +65,7 @@ int main(const int argc, char *const argv[])
 				break;
 
 			default:
-				printf("Invalid command line syntax !\n");
+				printf("Invalid command line arguments!\n");
 				print_instructions();
 		}
 	}
@@ -78,7 +78,7 @@ int main(const int argc, char *const argv[])
 	FILE *inspc = fopen(inspc_path, "rb");
 	if(!inspc)
 	{
-		fprintf(stderr, "No such file : %s\n", inspc_path);
+		fprintf(stderr, "No such file: %s\n", inspc_path);
 		exit(1);
 	}
 
@@ -98,7 +98,7 @@ int main(const int argc, char *const argv[])
 		FILE *outwav = fopen(outwav_name, "wb");
 		if(!outwav)
 		{
-			fprintf(stderr, "Error : Can't open %s for writing.", outwav_path);
+			fprintf(stderr, "Error: Can't open %s for writing.", outwav_path);
 			continue;
 		}
 
@@ -125,7 +125,7 @@ int main(const int argc, char *const argv[])
 		//Check if the sample has looping enabled
 		if(flags & 0x02)  							//Samples with loop enabled
 		{
-			printf("\n* Sample #%d Length : %d Loop : %d.", sample, blockamount, looppos);
+			printf("\n* Sample #%d Length: %d Loop: %d.", sample, blockamount, looppos);
 
 			//Implement the "minimum length" function
 			int min_len_samples = (int)ceil(min_length*samplerate/16.0);
@@ -173,7 +173,7 @@ int main(const int argc, char *const argv[])
 		}
 		else 											//Samples with loop disabled
 		{
-			printf("\n* Sample #%d Lenght : %d Loop : disabled\n", sample, blockamount);
+			printf("\n* Sample #%d Length: %d Loop: disabled\n", sample, blockamount);
 
 			samples = safe_malloc(blockamount * 32);
 			pcm_t *buf_ptr = samples;

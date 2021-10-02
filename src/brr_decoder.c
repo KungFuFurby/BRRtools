@@ -11,14 +11,14 @@ static void print_instructions()
 {
 	printf(
 		"brr_decoder 3.15\n\n"
-		"Usage : brr_decoder [options] infile.brr outfile.wav\n"
-		"Options :\n"
+		"Usage: brr_decoder [options] infile.brr outfile.wav\n"
+		"Options:\n"
 		"-n number of times to loop through the sample, default 1\n"
 		"-l loop start point (in BRR block units), default 0\n"
 		"-s output samplerate, default 32000\n"
 		"-m minimum sample length in seconds (requires looping enabled)\n"
 		"-g simulate SNES' gaussian lowpass filtering\n"
-		"\nExample : brr_decoder -n19 -l128 -s16000 some_sample.brr some_sample.wav\n"
+		"\nExample: brr_decoder -n19 -l128 -s16000 some_sample.brr some_sample.wav\n"
 	);
 	exit(1);
 }
@@ -56,7 +56,7 @@ int main(const int argc, char *const argv[])
 				break;
 
 			default:
-				printf("Invalid command line syntax !\n");
+				printf("Invalid command line arguments!\n");
 				print_instructions();
 		}
 	}
@@ -69,7 +69,7 @@ int main(const int argc, char *const argv[])
 	FILE *inbrr = fopen(inbrr_path, "rb");
 	if(!inbrr)
 	{
-		fprintf(stderr, "No such file : %s\n", inbrr_path);
+		fprintf(stderr, "No such file: %s\n", inbrr_path);
 		exit(1);
 	}
 
@@ -80,16 +80,16 @@ int main(const int argc, char *const argv[])
 	// Size should be an integer multiple of 9
 	if(size%9 != 0)
 	{
-		fprintf(stderr, "Error : Size of BRR file %s isn't a multiple of 9 bytes.\n", inbrr_path);
+		fprintf(stderr, "Error: Size of BRR file %s isn't a multiple of 9 bytes.\n", inbrr_path);
 		exit(1);
 	}
 
 	int blockamount = size/9;
-	printf("Number of BRR blocks to decode : %d.\n", blockamount);
+	printf("Number of BRR blocks to decode: %d.\n", blockamount);
 
 	if(looppos >= blockamount)  	//Make sure the loop position is in range
 	{
-		fprintf(stderr, "Error : Loop position is out of range\n");
+		fprintf(stderr, "Error: Loop position is out of range\n");
 		exit(1);
 	}
 
@@ -148,6 +148,6 @@ int main(const int argc, char *const argv[])
 
 	fclose(outwav);
 	free(samples);
-	printf("Done !\n");
+	printf("Done!\n");
 	return 0;		// Exit without error
 }
